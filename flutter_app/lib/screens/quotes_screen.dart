@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_app/models/quote.dart';
+import 'package:flutter_app/screens/quote_detail_screen.dart';
 import 'package:flutter_app/services/quotes_service.dart';
-import 'package:flutter_app/widgets/quote_dialog.dart';
+import 'package:flutter_app/widgets/quote_card.dart';
 
 class QuotesScreen extends StatefulWidget {
   const QuotesScreen({super.key});
@@ -25,40 +26,6 @@ class QuotesScreenState extends State<QuotesScreen> {
     _quotesFuture = _quotesService.getQuotes();
   }
 
-  Future<void> _addQuote(Quote quote) async {
-    await _quotesService.addQuote(quote);
-    setState(() {
-      _loadQuotes();
-    });
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Zitat erfolgreich hinzugefügt')),
-      );
-    }
-  }
-
-  Future<void> _toggleFavorite(Quote quote) async {
-    final updatedQuote = quote.copyWith(
-      isFavorite: !(quote.isFavorite ?? false),
-    );
-    await _quotesService.updateQuote(updatedQuote);
-    setState(() {
-      _loadQuotes();
-    });
-  }
-
-  Future<void> _deleteQuote(String id) async {
-    await _quotesService.deleteQuote(id);
-    setState(() {
-      _loadQuotes();
-    });
-    if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Zitat gelöscht')));
-    }
-  }
-
   void refreshQuotes() {
     setState(() {
       _loadQuotes();
@@ -67,94 +34,90 @@ class QuotesScreenState extends State<QuotesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Quote>>(
-      future: _quotesFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.format_quote, size: 50),
-                SizedBox(height: 16),
-                Text('Keine Zitate vorhanden', style: TextStyle(fontSize: 24)),
-                SizedBox(height: 8),
-                Text('Fügen Sie Ihre Lieblingszitate aus Filmen hinzu'),
-              ],
-            ),
-          );
-        }
-
-        final quotes = snapshot.data!;
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: quotes.length,
-          itemBuilder: (context, index) {
-            final quote = quotes[index];
-            return Card(
-              elevation: 3,
-              margin: const EdgeInsets.only(bottom: 16),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
+    return Column(
+      children: [
+        Image.asset(
+          'assets/images/cinema.png',
+          height: 300,
+          width: double.infinity,
+          fit: BoxFit.fill,
+          semanticLabel: 'Kino-Illustration mit Menschen, die Filme schauen',
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback if image is not found
+            return Container(
+              height: 200,
+              decoration: const BoxDecoration(color: Color(0xFFF3E5F5)),
+              child: const Center(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.format_quote, size: 24),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            quote.text,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            quote.isFavorite == true
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: quote.isFavorite == true ? Colors.red : null,
-                          ),
-                          onPressed: () => _toggleFavorite(quote),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
+                    Icon(Icons.movie, size: 64, color: Colors.black54),
+                    SizedBox(height: 8),
                     Text(
-                      '${quote.movie} ${quote.year != null ? "(${quote.year})" : ""}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    if (quote.character != null) ...[
-                      const SizedBox(height: 4),
-                      Text('Character: ${quote.character}'),
-                    ],
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () => _deleteQuote(quote.id!),
-                          tooltip: 'Löschen',
-                        ),
-                      ],
+                      'Kino & Filmzitate',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
                   ],
                 ),
               ),
             );
           },
-        );
-      },
+        ),
+        FutureBuilder<List<Quote>>(
+          future: _quotesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.format_quote, size: 50),
+                    SizedBox(height: 16),
+                    Text(
+                      'Keine Zitate vorhanden',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                    SizedBox(height: 8),
+                    Text('Fügen Sie Ihre Lieblingszitate aus Filmen hinzu'),
+                  ],
+                ),
+              );
+            }
+            final quotes = snapshot.data!;
+            return Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: quotes.length,
+                itemBuilder: (context, index) {
+                  final quote = quotes[index];
+                  return QuoteCard(
+                    quote: quote,
+                    onTap: () async {
+                      final result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => QuoteDetailScreen(quote: quote),
+                        ),
+                      );
+                      // Refresh the quotes list if something was changed or deleted
+                      if (result != null) {
+                        refreshQuotes();
+                      }
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

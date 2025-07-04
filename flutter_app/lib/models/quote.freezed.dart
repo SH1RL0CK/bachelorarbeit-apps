@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Quote {
 
- String? get id; String get text; String get movie; String? get character; int? get year; DateTime? get createdAt; bool? get isFavorite;
+ String? get id; String get text; String get movie; String? get character; int? get year; int get rating; DateTime? get createdAt;
 /// Create a copy of Quote
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $QuoteCopyWith<Quote> get copyWith => _$QuoteCopyWithImpl<Quote>(this as Quote, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Quote&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.movie, movie) || other.movie == movie)&&(identical(other.character, character) || other.character == character)&&(identical(other.year, year) || other.year == year)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Quote&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.movie, movie) || other.movie == movie)&&(identical(other.character, character) || other.character == character)&&(identical(other.year, year) || other.year == year)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,text,movie,character,year,createdAt,isFavorite);
+int get hashCode => Object.hash(runtimeType,id,text,movie,character,year,rating,createdAt);
 
 @override
 String toString() {
-  return 'Quote(id: $id, text: $text, movie: $movie, character: $character, year: $year, createdAt: $createdAt, isFavorite: $isFavorite)';
+  return 'Quote(id: $id, text: $text, movie: $movie, character: $character, year: $year, rating: $rating, createdAt: $createdAt)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $QuoteCopyWith<$Res>  {
   factory $QuoteCopyWith(Quote value, $Res Function(Quote) _then) = _$QuoteCopyWithImpl;
 @useResult
 $Res call({
- String? id, String text, String movie, String? character, int? year, DateTime? createdAt, bool? isFavorite
+ String? id, String text, String movie, String? character, int? year, int rating, DateTime? createdAt
 });
 
 
@@ -66,16 +66,16 @@ class _$QuoteCopyWithImpl<$Res>
 
 /// Create a copy of Quote
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? text = null,Object? movie = null,Object? character = freezed,Object? year = freezed,Object? createdAt = freezed,Object? isFavorite = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? text = null,Object? movie = null,Object? character = freezed,Object? year = freezed,Object? rating = null,Object? createdAt = freezed,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,movie: null == movie ? _self.movie : movie // ignore: cast_nullable_to_non_nullable
 as String,character: freezed == character ? _self.character : character // ignore: cast_nullable_to_non_nullable
 as String?,year: freezed == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
-as int?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,isFavorite: freezed == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
-as bool?,
+as int?,rating: null == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
+as int,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -86,7 +86,7 @@ as bool?,
 @JsonSerializable()
 
 class _Quote implements Quote {
-  const _Quote({this.id, required this.text, required this.movie, this.character, this.year, this.createdAt, this.isFavorite});
+  const _Quote({this.id, required this.text, required this.movie, this.character, this.year, this.rating = 1, this.createdAt});
   factory _Quote.fromJson(Map<String, dynamic> json) => _$QuoteFromJson(json);
 
 @override final  String? id;
@@ -94,8 +94,8 @@ class _Quote implements Quote {
 @override final  String movie;
 @override final  String? character;
 @override final  int? year;
+@override@JsonKey() final  int rating;
 @override final  DateTime? createdAt;
-@override final  bool? isFavorite;
 
 /// Create a copy of Quote
 /// with the given fields replaced by the non-null parameter values.
@@ -110,16 +110,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Quote&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.movie, movie) || other.movie == movie)&&(identical(other.character, character) || other.character == character)&&(identical(other.year, year) || other.year == year)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Quote&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.movie, movie) || other.movie == movie)&&(identical(other.character, character) || other.character == character)&&(identical(other.year, year) || other.year == year)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,text,movie,character,year,createdAt,isFavorite);
+int get hashCode => Object.hash(runtimeType,id,text,movie,character,year,rating,createdAt);
 
 @override
 String toString() {
-  return 'Quote(id: $id, text: $text, movie: $movie, character: $character, year: $year, createdAt: $createdAt, isFavorite: $isFavorite)';
+  return 'Quote(id: $id, text: $text, movie: $movie, character: $character, year: $year, rating: $rating, createdAt: $createdAt)';
 }
 
 
@@ -130,7 +130,7 @@ abstract mixin class _$QuoteCopyWith<$Res> implements $QuoteCopyWith<$Res> {
   factory _$QuoteCopyWith(_Quote value, $Res Function(_Quote) _then) = __$QuoteCopyWithImpl;
 @override @useResult
 $Res call({
- String? id, String text, String movie, String? character, int? year, DateTime? createdAt, bool? isFavorite
+ String? id, String text, String movie, String? character, int? year, int rating, DateTime? createdAt
 });
 
 
@@ -147,16 +147,16 @@ class __$QuoteCopyWithImpl<$Res>
 
 /// Create a copy of Quote
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? text = null,Object? movie = null,Object? character = freezed,Object? year = freezed,Object? createdAt = freezed,Object? isFavorite = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? text = null,Object? movie = null,Object? character = freezed,Object? year = freezed,Object? rating = null,Object? createdAt = freezed,}) {
   return _then(_Quote(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,movie: null == movie ? _self.movie : movie // ignore: cast_nullable_to_non_nullable
 as String,character: freezed == character ? _self.character : character // ignore: cast_nullable_to_non_nullable
 as String?,year: freezed == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
-as int?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,isFavorite: freezed == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
-as bool?,
+as int?,rating: null == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
+as int,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

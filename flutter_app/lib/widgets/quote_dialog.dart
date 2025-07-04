@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:flutter_app/models/quote.dart';
+import 'package:flutter_app/widgets/star_rating_widget.dart';
 
 class QuoteDialog extends StatefulWidget {
   final Quote? quote;
@@ -20,7 +21,7 @@ class _QuoteDialogState extends State<QuoteDialog> {
   final _movieController = TextEditingController();
   final _characterController = TextEditingController();
   final _yearController = TextEditingController();
-  bool _isFavorite = false;
+  int _rating = 1;
 
   @override
   void initState() {
@@ -30,7 +31,7 @@ class _QuoteDialogState extends State<QuoteDialog> {
       _movieController.text = widget.quote!.movie;
       _characterController.text = widget.quote!.character ?? '';
       _yearController.text = widget.quote!.year?.toString() ?? '';
-      _isFavorite = widget.quote!.isFavorite ?? false;
+      _rating = widget.quote!.rating;
     }
   }
 
@@ -60,8 +61,8 @@ class _QuoteDialogState extends State<QuoteDialog> {
                 decoration: const InputDecoration(
                   labelText: 'Zitat Text*',
                   hintText: 'Geben Sie den Zitat-Text ein',
+                  border: OutlineInputBorder(),
                 ),
-                maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Bitte geben Sie den Zitat-Text ein';
@@ -75,6 +76,7 @@ class _QuoteDialogState extends State<QuoteDialog> {
                 decoration: const InputDecoration(
                   labelText: 'Film/Serie*',
                   hintText: 'Name des Films oder der Serie',
+                  border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -89,6 +91,7 @@ class _QuoteDialogState extends State<QuoteDialog> {
                 decoration: const InputDecoration(
                   labelText: 'Charakter',
                   hintText: 'Wer hat das Zitat gesagt?',
+                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
@@ -97,22 +100,34 @@ class _QuoteDialogState extends State<QuoteDialog> {
                 decoration: const InputDecoration(
                   labelText: 'Erscheinungsjahr',
                   hintText: 'z.B. 1999',
+                  border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
               ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Checkbox(
-                    value: _isFavorite,
-                    onChanged: (value) {
-                      setState(() {
-                        _isFavorite = value ?? false;
-                      });
-                    },
+              const SizedBox(height: 24),
+
+              // Rating section
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Bewertung:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
                   ),
-                  const Text('Favorit'),
-                ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              StarRatingWidget(
+                rating: _rating,
+                onRatingChanged: (rating) {
+                  setState(() {
+                    _rating = rating;
+                  });
+                },
+                starSize: 28.0,
+                isEditable: true,
               ),
             ],
           ),
@@ -124,6 +139,9 @@ class _QuoteDialogState extends State<QuoteDialog> {
           child: const Text('Abbrechen'),
         ),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).primaryColor,
+          ),
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               final quote = Quote(
@@ -136,14 +154,14 @@ class _QuoteDialogState extends State<QuoteDialog> {
                 year: _yearController.text.isEmpty
                     ? null
                     : int.tryParse(_yearController.text),
-                isFavorite: _isFavorite,
+                rating: _rating,
                 createdAt: widget.quote?.createdAt ?? DateTime.now(),
               );
               widget.onSave(quote);
               Navigator.of(context).pop();
             }
           },
-          child: const Text('Speichern'),
+          child: const Text('Speichern', style: TextStyle(color: Colors.white)),
         ),
       ],
     );

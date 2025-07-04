@@ -12,10 +12,10 @@ _Quote _$QuoteFromJson(Map<String, dynamic> json) => _Quote(
   movie: json['movie'] as String,
   character: json['character'] as String?,
   year: (json['year'] as num?)?.toInt(),
+  rating: (json['rating'] as num?)?.toInt() ?? 1,
   createdAt: json['createdAt'] == null
       ? null
       : DateTime.parse(json['createdAt'] as String),
-  isFavorite: json['isFavorite'] as bool?,
 );
 
 Map<String, dynamic> _$QuoteToJson(_Quote instance) => <String, dynamic>{
@@ -24,6 +24,6 @@ Map<String, dynamic> _$QuoteToJson(_Quote instance) => <String, dynamic>{
   'movie': instance.movie,
   'character': instance.character,
   'year': instance.year,
+  'rating': instance.rating,
   'createdAt': instance.createdAt?.toIso8601String(),
-  'isFavorite': instance.isFavorite,
 };

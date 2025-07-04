@@ -11,8 +11,8 @@ abstract class Quote with _$Quote {
     required String movie,
     String? character,
     int? year,
+    @Default(1) int rating,
     DateTime? createdAt,
-    bool? isFavorite,
   }) = _Quote;
 
   factory Quote.fromJson(Map<String, dynamic> json) => _$QuoteFromJson(json);
