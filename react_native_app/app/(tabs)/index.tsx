@@ -1,111 +1,256 @@
 import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
+import { Appbar, FAB, Text, useTheme } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { QuoteCard } from "../../components/QuoteCard";
+import { QuoteDialog } from "../../components/QuoteDialog";
+import { Quote } from "../../models/quote";
+import { quotesService } from "../../services/quotesService";
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import React from "react";
-import { Button, Dialog, FAB, Portal, Text } from "react-native-paper";
+export default function QuotesScreen() {
+    const theme = useTheme();
+    const router = useRouter();
+    const [quotes, setQuotes] = useState<Quote[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [isDialogVisible, setIsDialogVisible] = useState(false);
 
-export default function HomeScreen() {
-    const [visible, setVisible] = React.useState(false);
+    const loadQuotes = useCallback(async () => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            const fetchedQuotes = await quotesService.getQuotes();
+            setQuotes(fetchedQuotes);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Unknown error");
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
 
-    const showDialog = () => setVisible(true);
+    const refreshQuotes = useCallback(() => {
+        loadQuotes();
+    }, [loadQuotes]);
 
-    const hideDialog = () => setVisible(false);
+    // Use useFocusEffect to refresh quotes when returning from detail screen
+    useFocusEffect(
+        useCallback(() => {
+            loadQuotes();
+        }, [loadQuotes])
+    );
+
+    const handleQuoteTap = (quote: Quote) => {
+        router.push({
+            pathname: "/quote-detail",
+            params: { quote: JSON.stringify(quote) },
+        });
+    };
+
+    const handleAddQuote = () => {
+        setIsDialogVisible(true);
+    };
+
+    const handleDialogDismiss = () => {
+        setIsDialogVisible(false);
+    };
+
+    const handleQuoteSave = async (quote: Quote) => {
+        try {
+            await quotesService.addQuote(quote);
+            refreshQuotes();
+        } catch (err) {
+            console.error("Error saving quote:", err);
+        }
+    };
+
+    const renderEmptyState = () => (
+        <View style={styles.emptyState}>
+            <Text
+                variant="displaySmall"
+                style={{ color: theme.colors.onSurface }}
+            >
+                📝
+            </Text>
+            <Text
+                variant="headlineSmall"
+                style={[styles.emptyTitle, { color: theme.colors.onSurface }]}
+            >
+                Keine Zitate vorhanden
+            </Text>
+            <Text
+                variant="bodyMedium"
+                style={[
+                    styles.emptySubtitle,
+                    { color: theme.colors.onSurfaceVariant },
+                ]}
+            >
+                Fügen Sie Ihre Lieblingszitate aus Filmen hinzu
+            </Text>
+        </View>
+    );
+
+    const renderError = () => (
+        <View style={styles.errorState}>
+            <Text
+                variant="headlineSmall"
+                style={[styles.errorTitle, { color: theme.colors.error }]}
+            >
+                Fehler
+            </Text>
+            <Text
+                variant="bodyMedium"
+                style={[
+                    styles.errorMessage,
+                    { color: theme.colors.onSurfaceVariant },
+                ]}
+            >
+                {error}
+            </Text>
+        </View>
+    );
+
+    const renderLoading = () => (
+        <View style={styles.loadingState}>
+            <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+    );
+
+    const renderQuoteItem = ({ item }: { item: Quote }) => (
+        <QuoteCard quote={item} onTap={() => handleQuoteTap(item)} />
+    );
+
     return (
-        <ParallaxScrollView
-            headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-            headerImage={
-                <Image
-                    source={require("@/assets/images/partial-react-logo.png")}
-                    style={styles.reactLogo}
-                />
-            }
+        <SafeAreaView
+            style={[
+                styles.container,
+                { backgroundColor: theme.colors.background },
+            ]}
         >
-            <FAB
-                label="Deine Mum"
-                icon="plus"
-                onPress={() => console.log("Pressed")}
+            <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
+                <Appbar.Content
+                    title="CineLines"
+                    titleStyle={{
+                        color: theme.colors.onSurface,
+                        textAlign: "center",
+                    }}
+                />
+            </Appbar.Header>
+
+            <View style={styles.content}>
+                {/* Hero Image */}
+                <View style={styles.heroImageContainer}>
+                    <Image
+                        source={require("@/assets/images/cinema.png")}
+                        style={styles.heroImage}
+                        contentFit="cover"
+                    />
+                </View>
+
+                {/* Content Area */}
+                <View style={styles.listContainer}>
+                    {isLoading ? (
+                        renderLoading()
+                    ) : error ? (
+                        renderError()
+                    ) : quotes.length === 0 ? (
+                        renderEmptyState()
+                    ) : (
+                        <FlatList
+                            data={quotes}
+                            renderItem={renderQuoteItem}
+                            keyExtractor={(item) => item.id || item.text}
+                            contentContainerStyle={styles.listContent}
+                            showsVerticalScrollIndicator={false}
+                        />
+                    )}
+                </View>
+            </View>
+
+            <FAB icon="plus" style={styles.fab} onPress={handleAddQuote} />
+
+            <QuoteDialog
+                visible={isDialogVisible}
+                onDismiss={handleDialogDismiss}
+                onSave={handleQuoteSave}
             />
-            <Button icon="camera" mode="outlined" onPress={showDialog}>
-                Press me
-            </Button>
-            <Portal>
-                <Dialog visible={visible} onDismiss={hideDialog}>
-                    <Dialog.Title>Alert</Dialog.Title>
-                    <Dialog.Content>
-                        <Text variant="bodyMedium">This is simple dialog</Text>
-                    </Dialog.Content>
-                    <Dialog.Actions>
-                        <Button onPress={hideDialog}>Done</Button>
-                    </Dialog.Actions>
-                </Dialog>
-            </Portal>
-            <ThemedView style={styles.titleContainer}>
-                <ThemedText type="title">Welcome!</ThemedText>
-                <HelloWave />
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-                <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-                <ThemedText>
-                    Edit{" "}
-                    <ThemedText type="defaultSemiBold">
-                        app/(tabs)/index.tsx
-                    </ThemedText>{" "}
-                    to see changes. Press{" "}
-                    <ThemedText type="defaultSemiBold">
-                        {Platform.select({
-                            ios: "cmd + d",
-                            android: "cmd + m",
-                            web: "F12",
-                        })}
-                    </ThemedText>{" "}
-                    to open developer tools.
-                </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-                <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-                <ThemedText>
-                    {`Tap the Explore tab to learn more about what's included in this starter app.`}
-                </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-                <ThemedText type="subtitle">
-                    Step 3: Get a fresh start
-                </ThemedText>
-                <ThemedText>
-                    {`When you're ready, run `}
-                    <ThemedText type="defaultSemiBold">
-                        npm run reset-project
-                    </ThemedText>{" "}
-                    to get a fresh{" "}
-                    <ThemedText type="defaultSemiBold">app</ThemedText>{" "}
-                    directory. This will move the current{" "}
-                    <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-                    <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-                </ThemedText>
-            </ThemedView>
-        </ParallaxScrollView>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    titleContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
+    container: {
+        flex: 1,
     },
-    stepContainer: {
-        gap: 8,
+    content: {
+        flex: 1,
+    },
+    heroImage: {
+        height: 200,
+        width: "100%",
+    },
+    heroImageContainer: {
+        height: 300,
+        width: "100%",
+    },
+    heroImageFallback: {
+        height: 300,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    heroIcon: {
+        fontSize: 64,
         marginBottom: 8,
     },
-    reactLogo: {
-        height: 178,
-        width: 290,
-        bottom: 0,
-        left: 0,
+    heroTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+    },
+    listContainer: {
+        flex: 1,
+    },
+    listContent: {
+        padding: 16,
+    },
+    emptyState: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 32,
+    },
+    emptyTitle: {
+        marginTop: 16,
+        textAlign: "center",
+        fontWeight: "bold",
+    },
+    emptySubtitle: {
+        marginTop: 8,
+        textAlign: "center",
+    },
+    errorState: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 32,
+    },
+    errorTitle: {
+        marginBottom: 8,
+        textAlign: "center",
+        fontWeight: "bold",
+    },
+    errorMessage: {
+        textAlign: "center",
+    },
+    loadingState: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    fab: {
         position: "absolute",
+        margin: 16,
+        right: 0,
+        bottom: 0, // Account for tab bar
     },
 });

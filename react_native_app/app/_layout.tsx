@@ -1,12 +1,6 @@
-import {
-    DarkTheme,
-    DefaultTheme,
-    ThemeProvider,
-} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { PaperProvider } from "react-native-paper";
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -25,31 +19,32 @@ export default function RootLayout() {
     }
 
     return (
-        <ThemeProvider
-            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        <PaperProvider
+            theme={colorScheme === "dark" ? MD3DarkTheme : MD3LightTheme}
         >
-            <PaperProvider>
-                <React.Fragment>
-                    {Platform.OS === "web" ? (
-                        <style type="text/css">
-                            {`
+            <React.Fragment>
+                {Platform.OS === "web" ? (
+                    <style type="text/css">
+                        {`
                                 @font-face {
                                 font-family: 'MaterialDesignIcons';
                                 src: url(${require("@react-native-vector-icons/material-design-icons/fonts/MaterialDesignIcons.ttf")}) format('truetype');
                             }
                             `}
-                        </style>
-                    ) : null}
-                    <Stack>
-                        <Stack.Screen
-                            name="(tabs)"
-                            options={{ headerShown: false }}
-                        />
-                        <Stack.Screen name="+not-found" />
-                    </Stack>
-                </React.Fragment>
-            </PaperProvider>
-            <StatusBar style="auto" />
-        </ThemeProvider>
+                    </style>
+                ) : null}
+                <Stack>
+                    <Stack.Screen
+                        name="(tabs)"
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen
+                        name="quote-detail"
+                        options={{ headerShown: false }}
+                    />
+                    <Stack.Screen name="+not-found" />
+                </Stack>
+            </React.Fragment>
+        </PaperProvider>
     );
 }

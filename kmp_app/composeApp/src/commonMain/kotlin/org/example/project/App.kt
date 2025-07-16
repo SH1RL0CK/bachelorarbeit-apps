@@ -1,42 +1,112 @@
 package org.example.project
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FormatQuote
+import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import org.example.project.models.Quote
+import org.example.project.screens.QuoteDetailScreen
+import org.example.project.screens.QuotesScreen
+import org.example.project.screens.RandomQuoteScreen
+import org.example.project.services.QuotesService
+import org.example.project.widgets.QuoteDialog
 
-import kotlinproject.composeapp.generated.resources.Res
-import kotlinproject.composeapp.generated.resources.compose_multiplatform
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun App() {
+    var selectedTab by remember { mutableStateOf(0) }
+    var showDialog by remember { mutableStateOf(false) }
+    var refreshTrigger by remember { mutableStateOf(0) }
+    var selectedQuote by remember { mutableStateOf<Quote?>(null) }
+    val quotesService = remember { QuotesService() }
+
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
+        // Show QuoteDetailScreen as full-screen overlay
+        if (selectedQuote != null) {
+            QuoteDetailScreen(
+                quote = selectedQuote!!,
+                quotesService = quotesService,
+                onBack = { selectedQuote = null },
+                onQuoteUpdated = {
+                    refreshTrigger++
+                    selectedQuote = null
+                }
+            )
+        } else {
+            // Main app with navigation
+            Scaffold(
+                topBar = {
+                    CenterAlignedTopAppBar(
+                        title = { Text("CineLines") }
+                    )
+                },
+                bottomBar = {
+                    NavigationBar {
+                        NavigationBarItem(
+                            selected = selectedTab == 0,
+                            onClick = { selectedTab = 0 },
+                            icon = { Icon(Icons.Default.FormatQuote, contentDescription = null) },
+                            label = { Text("Zitate") }
+                        )
+                        NavigationBarItem(
+                            selected = selectedTab == 1,
+                            onClick = { selectedTab = 1 },
+                            icon = { Icon(Icons.Default.Movie, contentDescription = null) },
+                            label = { Text("Zufällig") }
+                        )
+                    }
+                },
+                floatingActionButton = {
+                    if (selectedTab == 0) {
+                        FloatingActionButton(
+                            onClick = { showDialog = true }
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = "Zitat hinzufügen")
+                        }
+                    }
+                }
+            ) { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    when (selectedTab) {
+                        0 -> {
+                            QuotesScreen(
+                                quotesService = quotesService,
+                                refreshTrigger = refreshTrigger,
+                                onQuoteTap = { quote -> selectedQuote = quote }
+                            )
+                        }
+                        1 -> {
+                            RandomQuoteScreen(quotesService = quotesService)
+                        }
+                    }
+                }
+
+                if (showDialog) {
+                    QuoteDialog(
+                        onSave = { quote ->
+                            // Use a coroutine scope to handle the suspend function
+                            MainScope().launch {
+                                quotesService.addQuote(quote)
+                                refreshTrigger++
+                                showDialog = false
+                            }
+                        },
+                        onDismiss = { showDialog = false }
+                    )
                 }
             }
         }

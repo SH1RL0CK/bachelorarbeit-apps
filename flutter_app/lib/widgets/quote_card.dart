@@ -9,7 +9,6 @@ class QuoteCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
-  final VoidCallback? onFavoriteToggle;
 
   const QuoteCard({
     super.key,
@@ -17,7 +16,6 @@ class QuoteCard extends StatelessWidget {
     this.onTap,
     this.onEdit,
     this.onDelete,
-    this.onFavoriteToggle,
   });
 
   @override
