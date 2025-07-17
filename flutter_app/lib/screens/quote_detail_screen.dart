@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_app/models/quote.dart';
 import 'package:flutter_app/services/quotes_service.dart';
@@ -163,6 +164,7 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
                   }
                   return null;
                 },
+                textInputAction: TextInputAction.next,
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
@@ -175,6 +177,7 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
                   hintText: 'Wer hat das Zitat gesagt?',
                   border: OutlineInputBorder(),
                 ),
+                textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 16),
 
@@ -192,6 +195,7 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
                   }
                   return null;
                 },
+                textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 16),
 
@@ -204,16 +208,19 @@ class _QuoteDetailScreenState extends State<QuoteDetailScreen> {
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
+                maxLength: 4,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                textInputAction: TextInputAction.done,
               ),
               const SizedBox(height: 32),
 
               // Rating section
-              const Text(
+              Text(
                 'Zitat bewerten:',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 12),

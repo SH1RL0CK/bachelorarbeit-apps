@@ -13,27 +13,16 @@ class CineLinesApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      themeMode: ThemeMode.system,
       home: const NavigationScreen(),
       debugShowCheckedModeBanner: false,
-      builder: (context, child) {
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            return Container(
-              color: Theme.of(
-                context,
-              ).colorScheme.surface, // ⬅ Hintergrund für ganzen Canvas
-              width: double.infinity,
-              height: double.infinity,
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1200),
-                  child: child ?? const SizedBox(),
-                ),
-              ),
-            );
-          },
-        );
-      },
     );
   }
 }

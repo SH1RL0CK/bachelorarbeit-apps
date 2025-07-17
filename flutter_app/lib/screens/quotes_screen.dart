@@ -38,27 +38,33 @@ class QuotesScreenState extends State<QuotesScreen> {
       children: [
         Image.asset(
           'assets/images/cinema.png',
-          height: 300,
+          height: 250,
           width: double.infinity,
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
           semanticLabel: 'Kino-Illustration mit Menschen, die Filme schauen',
           errorBuilder: (context, error, stackTrace) {
             // Fallback if image is not found
             return Container(
               height: 200,
-              decoration: const BoxDecoration(color: Color(0xFFF3E5F5)),
-              child: const Center(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              ),
+              child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.movie, size: 64, color: Colors.black54),
-                    SizedBox(height: 8),
+                    Icon(
+                      Icons.movie,
+                      size: 64,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 8),
                     Text(
                       'Kino & Filmzitate',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],

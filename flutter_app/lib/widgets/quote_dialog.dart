@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:uuid/uuid.dart';
 
@@ -69,6 +70,8 @@ class _QuoteDialogState extends State<QuoteDialog> {
                   }
                   return null;
                 },
+                textInputAction: TextInputAction.next,
+                maxLines: 3,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -84,6 +87,7 @@ class _QuoteDialogState extends State<QuoteDialog> {
                   }
                   return null;
                 },
+                textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -93,6 +97,7 @@ class _QuoteDialogState extends State<QuoteDialog> {
                   hintText: 'Wer hat das Zitat gesagt?',
                   border: OutlineInputBorder(),
                 ),
+                textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -103,18 +108,21 @@ class _QuoteDialogState extends State<QuoteDialog> {
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
+                maxLength: 4,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                textInputAction: TextInputAction.done,
               ),
               const SizedBox(height: 24),
 
               // Rating section
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Bewertung:',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -139,9 +147,6 @@ class _QuoteDialogState extends State<QuoteDialog> {
           child: const Text('Abbrechen'),
         ),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               final quote = Quote(
@@ -161,7 +166,7 @@ class _QuoteDialogState extends State<QuoteDialog> {
               Navigator.of(context).pop();
             }
           },
-          child: const Text('Speichern', style: TextStyle(color: Colors.white)),
+          child: Text('Speichern'),
         ),
       ],
     );

@@ -32,7 +32,7 @@ class _RandomQuoteScreenState extends State<RandomQuoteScreen> {
       _isLoading = true;
     });
     _videoPlayerController =
-        VideoPlayerController.asset('assets/videos/rick.mp4')
+        VideoPlayerController.asset('assets/videos/cinema.mp4')
           ..initialize().then((_) {
             setState(() {
               _videoPlayerController.play();
@@ -69,9 +69,12 @@ class _RandomQuoteScreenState extends State<RandomQuoteScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               _videoPlayerController.value.isInitialized
-                  ? SizedBox(
-                      height: 300,
-                      child: VideoPlayer(_videoPlayerController),
+                  ? Semantics(
+                      label: "Kino-Video mit Szenen aus verschiedenen Filmen",
+                      child: SizedBox(
+                        height: 300,
+                        child: VideoPlayer(_videoPlayerController),
+                      ),
                     )
                   : const SizedBox.shrink(),
               // Random Quote Card
@@ -80,23 +83,36 @@ class _RandomQuoteScreenState extends State<RandomQuoteScreen> {
               else if (_currentQuote != null)
                 QuoteCard(quote: _currentQuote!)
               else
-                const Card(
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                Card(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: Padding(
-                    padding: EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(24),
                     child: Column(
                       children: [
-                        Icon(Icons.format_quote, size: 50, color: Colors.grey),
-                        SizedBox(height: 16),
+                        Icon(
+                          Icons.format_quote,
+                          size: 50,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(height: 16),
                         Text(
                           'Keine Zitate vorhanden',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
-                        SizedBox(height: 8),
-                        Text('Fügen Sie Ihr erstes Zitat hinzu!'),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Fügen Sie Ihr erstes Zitat hinzu!',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
                       ],
                     ),
                   ),

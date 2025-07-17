@@ -73,7 +73,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ? FloatingActionButton(
               onPressed: _showAddQuoteDialog,
               tooltip: 'Zitat hinzufügen',
-              child: const Icon(Icons.add),
+
+              child: const Icon(Icons.add, semanticLabel: "Zitat hinzufügen"),
             )
           : null, // Only show FAB on the Quotes screen
     );

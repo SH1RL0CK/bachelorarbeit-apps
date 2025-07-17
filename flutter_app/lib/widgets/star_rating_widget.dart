@@ -22,23 +22,40 @@ class StarRatingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: List.generate(maxRating, (index) {
-        return GestureDetector(
-          onTap: isEditable && onRatingChanged != null
-              ? () => onRatingChanged!(index + 1)
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Icon(
-              index < rating ? Icons.star : Icons.star_border,
-              size: starSize,
-              color: index < rating ? activeColor : inactiveColor,
+    return Semantics(
+      label: 'Bewertung: $rating von $maxRating Sternen',
+      value: '$rating/$maxRating',
+      hint: isEditable ? 'Tippen um Bewertung zu ändern' : null,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: List.generate(maxRating, (index) {
+          final starNumber = index + 1;
+          final isActive = index < rating;
+
+          return Semantics(
+            label: 'Stern $starNumber',
+            value: isActive ? 'ausgefüllt' : 'nicht ausgefüllt',
+            excludeSemantics: true,
+            button: isEditable,
+            onTap: isEditable && onRatingChanged != null
+                ? () => onRatingChanged!(starNumber)
+                : null,
+            child: InkWell(
+              onTap: isEditable && onRatingChanged != null
+                  ? () => onRatingChanged!(starNumber)
+                  : null,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Icon(
+                  isActive ? Icons.star : Icons.star_border,
+                  size: starSize,
+                  color: isActive ? activeColor : inactiveColor,
+                ),
+              ),
             ),
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 }
