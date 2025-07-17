@@ -1,5 +1,6 @@
 package org.example.project.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,12 +13,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinproject.composeapp.generated.resources.Res
+import kotlinproject.composeapp.generated.resources.cinema
 import org.example.project.models.Quote
 import org.example.project.services.QuotesService
 import org.example.project.widgets.QuoteCard
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun QuotesScreen(
@@ -43,36 +48,12 @@ fun QuotesScreen(
 
     Column {
         // Header image section with fallback
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp),
-            shape = RoundedCornerShape(0.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFF3E5F5))
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Movie,
-                        contentDescription = null,
-                        modifier = Modifier.size(64.dp),
-                        tint = Color.Black.copy(alpha = 0.54f)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Kino & Filmzitate",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black.copy(alpha = 0.87f)
-                    )
-                }
-            }
-        }
+        Image(
+            painter = painterResource(Res.drawable.cinema),
+            contentDescription = "Kino Hintergrundbild",
+            modifier = Modifier.height(200.dp),
+            contentScale = ContentScale.Crop,
+        )
 
         // Content section
         when {

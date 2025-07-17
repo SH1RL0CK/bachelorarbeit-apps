@@ -9,23 +9,23 @@ class QuotesService {
     private val quotes = mutableListOf<Quote>(
         Quote(
             id = "1",
-            text = "May the Force be with you.",
-            movie = "Star Wars: Episode IV - A New Hope",
+            text = "Möge die Macht mit dir sein.",
+            movie = "Krieg der Sterne",
             character = "Obi-Wan Kenobi",
             year = 1977,
             rating = 5
         ),
         Quote(
             id = "2",
-            text = "I'm going to make him an offer he can't refuse.",
-            movie = "The Godfather",
+            text = "Ich werde ihm ein Angebot machen, das er nicht ablehnen kann.",
+            movie = "Der Pate",
             character = "Don Vito Corleone",
             year = 1972,
             rating = 5
         ),
         Quote(
             id = "3",
-            text = "Here's looking at you, kid.",
+            text = "Schau mir in die Augen, Kleines.",
             movie = "Casablanca",
             character = "Rick Blaine",
             year = 1942,

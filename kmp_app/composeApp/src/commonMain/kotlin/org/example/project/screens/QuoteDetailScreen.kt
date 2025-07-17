@@ -2,6 +2,7 @@ package org.example.project.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -11,8 +12,11 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +47,7 @@ fun QuoteDetailScreen(
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val focusManager = LocalFocusManager.current
 
     fun validateForm(): Boolean {
         textError = if (text.isBlank()) "Bitte geben Sie den Zitat-Text ein" else null
@@ -135,7 +140,11 @@ fun QuoteDetailScreen(
                 isError = textError != null,
                 supportingText = textError?.let { { Text(it) } },
                 modifier = Modifier.fillMaxWidth(),
-                maxLines = 3
+                maxLines = 3,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                )
             )
 
             OutlinedTextField(
@@ -143,7 +152,11 @@ fun QuoteDetailScreen(
                 onValueChange = { character = it },
                 label = { Text("Charakter") },
                 placeholder = { Text("Wer hat das Zitat gesagt?") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                )
             )
 
             OutlinedTextField(
@@ -156,7 +169,11 @@ fun QuoteDetailScreen(
                 placeholder = { Text("Name des Films oder der Serie") },
                 isError = movieError != null,
                 supportingText = movieError?.let { { Text(it) } },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                )
             )
 
             OutlinedTextField(
@@ -164,7 +181,13 @@ fun QuoteDetailScreen(
                 onValueChange = { year = it },
                 label = { Text("Jahr") },
                 placeholder = { Text("z.B. 2004") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.clearFocus() }
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -179,7 +202,7 @@ fun QuoteDetailScreen(
 
             StarRating(
                 rating = rating,
-                starSize = 28.dp,
+                starSize = 32.dp,
                 isEditable = true,
                 onRatingChanged = { rating = it }
             )
@@ -244,4 +267,3 @@ fun QuoteDetailScreen(
         )
     }
 }
-

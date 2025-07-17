@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,11 +23,35 @@ fun QuoteCard(
     quote: Quote,
     onTap: (() -> Unit)? = null,
 ) {
+    val semanticLabel = buildString {
+        append("Zitat: ${quote.text}. ")
+        if (!quote.character.isNullOrEmpty()) {
+            append("Charakter: ${quote.character}. ")
+        } else {
+            append("Charakter: Unbekannt. ")
+        }
+        append("Film: ${quote.movie}")
+        if (quote.year != null) {
+            append(". Jahr: ${quote.year}")
+        }
+        append(". Bewertung: ${quote.rating} von 5 Sternen.")
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(12.dp))
+            .semantics(mergeDescendants = true) {
+                contentDescription = semanticLabel
+                if (onTap != null) {
+                    role = Role.Button
+                    onClick("Tippen, um Details zu sehen") {
+                        onTap()
+                        true
+                    }
+                }
+            }
             .clickable { onTap?.invoke() },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp)
@@ -34,7 +59,8 @@ fun QuoteCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
+                .clearAndSetSemantics { },
         ) {
             Text(
                 text = "\"${quote.text}\"",

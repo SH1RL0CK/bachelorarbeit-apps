@@ -2,12 +2,16 @@ package org.example.project.widgets
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +35,8 @@ fun QuoteDialog(
 
     var textError by remember { mutableStateOf<String?>(null) }
     var movieError by remember { mutableStateOf<String?>(null) }
+
+    val focusManager = LocalFocusManager.current
 
     fun validateForm(): Boolean {
         textError = if (text.isBlank()) "Bitte geben Sie den Zitat-Text ein" else null
@@ -71,7 +77,11 @@ fun QuoteDialog(
                     placeholder = { Text("Geben Sie den Zitat-Text ein") },
                     isError = textError != null,
                     supportingText = textError?.let { { Text(it) } },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -86,7 +96,11 @@ fun QuoteDialog(
                     placeholder = { Text("Name des Films oder der Serie") },
                     isError = movieError != null,
                     supportingText = movieError?.let { { Text(it) } },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -96,7 +110,11 @@ fun QuoteDialog(
                     onValueChange = { character = it },
                     label = { Text("Charakter") },
                     placeholder = { Text("Wer hat das Zitat gesagt?") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -106,7 +124,13 @@ fun QuoteDialog(
                     onValueChange = { year = it },
                     label = { Text("Erscheinungsjahr") },
                     placeholder = { Text("z.B. 1999") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -123,7 +147,7 @@ fun QuoteDialog(
 
                 StarRating(
                     rating = rating,
-                    starSize = 28.dp,
+                    starSize = 32.dp,
                     isEditable = true,
                     onRatingChanged = { rating = it }
                 )

@@ -1,6 +1,7 @@
 package org.example.project
 
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.filled.FormatQuote
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,14 +24,19 @@ import org.example.project.widgets.QuoteDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@Preview
 fun App() {
-    var selectedTab by remember { mutableStateOf(0) }
-    var showDialog by remember { mutableStateOf(false) }
-    var refreshTrigger by remember { mutableStateOf(0) }
-    var selectedQuote by remember { mutableStateOf<Quote?>(null) }
-    val quotesService = remember { QuotesService() }
+    val darkTheme = isSystemInDarkTheme()
 
-    MaterialTheme {
+    MaterialTheme(
+        colorScheme = if (darkTheme) darkColorScheme() else lightColorScheme()
+    ) {
+        var selectedTab by remember { mutableStateOf(0) }
+        var showDialog by remember { mutableStateOf(false) }
+        var refreshTrigger by remember { mutableStateOf(0) }
+        var selectedQuote by remember { mutableStateOf<Quote?>(null) }
+        val quotesService = remember { QuotesService() }
+
         // Show QuoteDetailScreen as full-screen overlay
         if (selectedQuote != null) {
             QuoteDetailScreen(
