@@ -12,10 +12,21 @@ interface QuoteCardProps {
 export const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onTap }) => {
     const theme = useTheme();
 
+    // Create comprehensive accessibility label similar to Flutter version
+    const accessibilityLabel = `Zitat: ${quote.text}. Charakter: ${
+        quote.character || "Unbekannt"
+    }. Film: ${quote.movie}${
+        quote.year ? `. Jahr: ${quote.year}` : ""
+    }. Bewertung: ${quote.rating} von 5 Sternen.`;
+
     return (
         <Card
             style={[styles.card, { backgroundColor: theme.colors.surface }]}
             onPress={onTap}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={accessibilityLabel}
+            accessibilityHint="Tippen, um Details zu sehen"
         >
             <Card.Content style={styles.content}>
                 {/* Quote text with quotation marks */}
@@ -25,6 +36,7 @@ export const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onTap }) => {
                         styles.quoteText,
                         { color: theme.colors.onSurfaceVariant },
                     ]}
+                    importantForAccessibility="no"
                 >
                     &ldquo;{quote.text}&rdquo;
                 </Text>
@@ -33,12 +45,13 @@ export const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onTap }) => {
 
                 {/* Character info with person icon */}
                 {quote.character && (
-                    <View style={styles.infoRow}>
+                    <View style={styles.infoRow} importantForAccessibility="no">
                         <IconButton
                             icon="account"
                             size={16}
                             iconColor={theme.colors.onSurfaceVariant}
                             style={styles.infoIcon}
+                            accessible={false}
                         />
                         <Text
                             variant="bodyMedium"
@@ -46,6 +59,7 @@ export const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onTap }) => {
                                 styles.infoText,
                                 { color: theme.colors.onSurfaceVariant },
                             ]}
+                            importantForAccessibility="no"
                         >
                             {quote.character}
                         </Text>
@@ -53,12 +67,13 @@ export const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onTap }) => {
                 )}
 
                 {/* Movie info with movie icon */}
-                <View style={styles.infoRow}>
+                <View style={styles.infoRow} importantForAccessibility="no">
                     <IconButton
                         icon="movie"
                         size={16}
                         iconColor={theme.colors.onSurfaceVariant}
                         style={styles.infoIcon}
+                        accessible={false}
                     />
                     <Text
                         variant="bodyMedium"
@@ -66,6 +81,7 @@ export const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onTap }) => {
                             styles.infoText,
                             { color: theme.colors.onSurfaceVariant },
                         ]}
+                        importantForAccessibility="no"
                     >
                         {quote.year
                             ? `${quote.movie} (${quote.year})`
@@ -74,7 +90,10 @@ export const QuoteCard: React.FC<QuoteCardProps> = ({ quote, onTap }) => {
                 </View>
 
                 {/* Rating display */}
-                <View style={styles.ratingContainer}>
+                <View
+                    style={styles.ratingContainer}
+                    importantForAccessibility="no"
+                >
                     <StarRating
                         rating={quote.rating}
                         starSize={16}

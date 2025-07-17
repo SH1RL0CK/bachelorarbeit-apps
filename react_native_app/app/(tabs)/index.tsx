@@ -127,8 +127,13 @@ export default function QuotesScreen() {
                 styles.container,
                 { backgroundColor: theme.colors.background },
             ]}
+            accessible={false}
         >
-            <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
+            <Appbar.Header
+                style={{ backgroundColor: theme.colors.surface }}
+                accessibilityRole="header"
+                accessibilityLabel="CineLines App-Header"
+            >
                 <Appbar.Content
                     title="CineLines"
                     titleStyle={{
@@ -138,18 +143,28 @@ export default function QuotesScreen() {
                 />
             </Appbar.Header>
 
-            <View style={styles.content}>
+            <View style={styles.content} accessible={false}>
                 {/* Hero Image */}
-                <View style={styles.heroImageContainer}>
+                <View
+                    style={styles.heroImageContainer}
+                    accessibilityRole="image"
+                    accessibilityLabel="Kino-Hintergrundbild mit Filmrollen und Projektoren"
+                >
                     <Image
                         source={require("@/assets/images/cinema.png")}
                         style={styles.heroImage}
                         contentFit="cover"
+                        accessible={true}
+                        accessibilityLabel="Kino-Hintergrundbild"
                     />
                 </View>
 
                 {/* Content Area */}
-                <View style={styles.listContainer}>
+                <View
+                    style={styles.listContainer}
+                    accessible={false}
+                    accessibilityLabel="Bereich für Filmzitate"
+                >
                     {isLoading ? (
                         renderLoading()
                     ) : error ? (
@@ -163,12 +178,22 @@ export default function QuotesScreen() {
                             keyExtractor={(item) => item.id || item.text}
                             contentContainerStyle={styles.listContent}
                             showsVerticalScrollIndicator={false}
+                            accessible={false}
+                            accessibilityLabel="Liste der Filmzitate"
+                            accessibilityHint="Wischen Sie nach oben oder unten, um durch die Zitate zu navigieren"
                         />
                     )}
                 </View>
             </View>
 
-            <FAB icon="plus" style={styles.fab} onPress={handleAddQuote} />
+            <FAB
+                icon="plus"
+                style={styles.fab}
+                onPress={handleAddQuote}
+                accessibilityLabel="Neues Zitat hinzufügen"
+                accessibilityHint="Tippen Sie, um ein neues Filmzitat hinzuzufügen"
+                accessibilityRole="button"
+            />
 
             <QuoteDialog
                 visible={isDialogVisible}
@@ -191,11 +216,11 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     heroImageContainer: {
-        height: 300,
+        height: 200,
         width: "100%",
     },
     heroImageFallback: {
-        height: 300,
+        height: 200,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -208,6 +233,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     listContainer: {
+        marginTop: 16,
         flex: 1,
     },
     listContent: {

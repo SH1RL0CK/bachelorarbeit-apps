@@ -23,21 +23,51 @@ export const StarRating: React.FC<StarRatingProps> = ({
     const inactiveColor = theme.colors.outline;
 
     return (
-        <View style={styles.container}>
-            {Array.from({ length: maxRating }, (_, index) => (
-                <IconButton
-                    key={index}
-                    icon={index < rating ? "star" : "star-outline"}
-                    iconColor={index < rating ? activeColor : inactiveColor}
-                    size={starSize}
-                    onPress={
-                        isEditable && onRatingChanged
-                            ? () => onRatingChanged(index + 1)
-                            : undefined
-                    }
-                    style={[styles.star, !isEditable && styles.nonEditable]}
-                />
-            ))}
+        <View
+            style={styles.container}
+            accessible={true}
+            accessibilityRole="adjustable"
+            accessibilityLabel={`Bewertung: ${rating} von ${maxRating} Sternen`}
+            accessibilityValue={{
+                min: 0,
+                max: maxRating,
+                now: rating,
+                text: `${rating}/${maxRating}`,
+            }}
+            accessibilityHint={
+                isEditable ? "Tippen um Bewertung zu ändern" : undefined
+            }
+        >
+            {Array.from({ length: maxRating }, (_, index) => {
+                const starNumber = index + 1;
+                const isActive = index < rating;
+
+                return (
+                    <IconButton
+                        key={index}
+                        icon={index < rating ? "star" : "star-outline"}
+                        iconColor={index < rating ? activeColor : inactiveColor}
+                        size={starSize}
+                        onPress={
+                            isEditable && onRatingChanged
+                                ? () => onRatingChanged(index + 1)
+                                : undefined
+                        }
+                        style={[styles.star, !isEditable && styles.nonEditable]}
+                        accessible={isEditable}
+                        accessibilityRole={isEditable ? "button" : undefined}
+                        accessibilityLabel={`Stern ${starNumber}`}
+                        accessibilityValue={{
+                            text: isActive ? "ausgefüllt" : "nicht ausgefüllt",
+                        }}
+                        accessibilityHint={
+                            isEditable
+                                ? `Tippen für ${starNumber} Sterne`
+                                : undefined
+                        }
+                    />
+                );
+            })}
         </View>
     );
 };

@@ -188,6 +188,7 @@ export default function QuoteDetailScreen() {
                     mode="outlined"
                     keyboardType="numeric"
                     style={styles.input}
+                    maxLength={4}
                 />
 
                 <Text
