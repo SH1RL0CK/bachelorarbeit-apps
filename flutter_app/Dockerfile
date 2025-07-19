@@ -6,6 +6,7 @@ ENV PATH="/flutter/bin:${PATH}"
 COPY . /app
 WORKDIR /app
 RUN flutter clean
+RUN dart run build_runner build --delete-conflicting-outputs
 RUN flutter build web
 
 FROM nginx
